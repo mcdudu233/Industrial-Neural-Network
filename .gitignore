@@ -10,3 +10,9 @@ __pycache__
 
 model.pth
 resnet/model.pth
+
+# 数据
+data
+data/*
+resnet/data
+resnet/data/*
