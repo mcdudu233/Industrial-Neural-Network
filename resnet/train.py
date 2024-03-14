@@ -40,7 +40,7 @@ def train(loader, model, criterion, optimizer, scheduler, epochs=10, IS_DEBUG=Fa
             average_loss = total_loss / batch
             loss_seq.append(average_loss)
             if IS_DEBUG:
-                print("第{}批次的损失：{}".format(batch, average_loss))
+                print("第{}批次的损失：{} 学习率：{}".format(batch, average_loss, optimizer.param_groups[0]['lr']))
 
         # 计算平均损失
         average_loss = total_loss / batch
@@ -48,6 +48,7 @@ def train(loader, model, criterion, optimizer, scheduler, epochs=10, IS_DEBUG=Fa
             print("*" * 20)
             print("完成第{}次训练：".format(epoch))
             print("损失：{}".format(average_loss))
+            print("*" * 20)
     print("*" * 20)
 
     if IS_DEBUG:
