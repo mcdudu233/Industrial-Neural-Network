@@ -29,15 +29,15 @@ if __name__ == '__main__':
 
     # 超参数
     learning_rate = 0.01  # 初始学习率
-    learning_factor = 0.999  # 学习率调整因子
+    learning_factor = 0.996  # 学习率调整因子
 
-    model = resnet34(2)  # 使用34层的resnet模型
+    model = nn.Sequential(resnet34(2), nn.Softmax())  # 使用34层的resnet模型 加上softmax
     criterion = nn.MSELoss()  # 损失计算器 均方误差
     optimizer = optim.Adam(model.parameters(), lr=learning_rate)  # 优化器 Adam优化
     scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer,  # 学习率调整器 ReduceLROnPlateau lr=lr*factor
                                                      mode='min',
                                                      factor=learning_factor,
-                                                     patience=30)
+                                                     patience=10)
 
     # 训练模型或者测试数据
     if IS_TRAIN:
@@ -45,11 +45,14 @@ if __name__ == '__main__':
         train_data = data.get_train_data(IS_DEBUG)
         # 训练模型
         model.train()
-        train(train_data, model, criterion, optimizer, scheduler, epochs=8, IS_DEBUG=IS_DEBUG, IS_CUDA=IS_CUDA)
+        train(train_data, model, criterion, optimizer, scheduler, epochs=15, IS_DEBUG=IS_DEBUG, IS_CUDA=IS_CUDA)
         # 保存训练好的模型
         torch.save(model.state_dict(), MODEL_PATH)
     else:
-        # 加载训练好的模型
+        # 加载训练好的模型和测试数据
         model.load_state_dict(torch.load(MODEL_PATH))
+        test_data = data.get_test_data(IS_DEBUG)
         # 评估模型
         model.eval()
+        for _, data in enumerate(test_data):
+            print(model(data))
