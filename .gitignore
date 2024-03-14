@@ -1,0 +1,12 @@
+.vscode/*
+.vscode
+.idea
+.idea/*
+logs
+logs/*
+
+__pycache__/*
+__pycache__
+
+model.pth
+resnet/model.pth
