@@ -42,9 +42,9 @@ def train(loader, model, criterion, optimizer, scheduler, epochs=10, IS_DEBUG=Fa
             total_accuracy += torch.sum(torch.max(output, dim=1)[1] == actual) / size
             average_accuracy = total_accuracy / batch
             if IS_DEBUG:
-                print("第{}批次的损失：{:.6f}\t学习率：{:.6f}\t准确率：{:.3f}".format(batch, average_loss,
-                                                                                   optimizer.param_groups[0]['lr'],
-                                                                                   average_accuracy))
+                print("第{}批次的损失：{:.6f}\t学习率：{:.6f}\t准确率：{:.1f}%".format(batch, average_loss,
+                                                                                    optimizer.param_groups[0]['lr'],
+                                                                                    average_accuracy * 100))
 
         # 计算平均损失
         average_loss = total_loss / batch
