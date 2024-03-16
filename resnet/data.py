@@ -2,6 +2,7 @@ import os
 
 import matplotlib.pyplot as plt
 import numpy as np
+import torch
 from PIL import Image
 from torch.utils.data import DataLoader, Dataset
 from torchvision import transforms
@@ -17,6 +18,27 @@ def deal_with_channel(path):
         img = Image.open(file)
         img = img.convert("RGB")
         img.save(file)
+
+
+# 获取图片的均值和方差
+def get_image_status(path):
+    transform = transforms.Compose([
+        transforms.Resize((256, 256)),
+        transforms.ToTensor(),
+    ])
+    train_data = ImageFolder(path, transform=transform)
+    train_loader = DataLoader(train_data, batch_size=1, shuffle=False, num_workers=0, pin_memory=True)
+    mean = torch.zeros(3)
+    std = torch.zeros(3)
+    for X, _ in train_loader:
+        for d in range(3):
+            mean[d] += X[:, d, :, :].mean()
+            std[d] += X[:, d, :, :].std()
+    mean.div_(len(train_data))
+    std.div_(len(train_data))
+    print(list(mean.numpy()))
+    print(list(std.numpy()))
+    return list(mean.numpy()), list(std.numpy())
 
 
 # 测试数据集加载器
@@ -48,8 +70,8 @@ class TestDataset(Dataset):
         return img
 
 
-mean = [0.485, 0.456, 0.406]  # 均值
-std = [0.229, 0.224, 0.225]  # 标准差
+mean = [0.48765466, 0.45418832, 0.41671938]  # 均值
+std = [0.22593492, 0.2212625, 0.2214118]  # 标准差
 data_transform = transforms.Compose([
     transforms.Resize((256, 256)),  # 256x256分辨率
     transforms.ToTensor(),  # 转换到张量
