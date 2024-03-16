@@ -8,6 +8,8 @@ def train(loader, model, criterion, optimizer, scheduler, epochs=10, IS_DEBUG=Fa
         model.cuda()
 
     loss_seq = []  # 损失率序列
+    accuracy_seq = []  # 准确率序列
+    learning_seq = []  # 学习率序列
     for epoch in range(1, epochs + 1):
         total_loss = 0  # 总共的损失
         total_accuracy = 0  # 总共的准确率
@@ -41,9 +43,12 @@ def train(loader, model, criterion, optimizer, scheduler, epochs=10, IS_DEBUG=Fa
             # 计算准确率
             total_accuracy += torch.sum(torch.max(output, dim=1)[1] == actual) / size
             average_accuracy = total_accuracy / batch
+            accuracy_seq.append(average_accuracy)
+            # 计算学习率
+            learning = optimizer.param_groups[0]['lr']
+            learning_seq.append(learning)
             if IS_DEBUG:
-                print("第{}批次的损失：{:.6f}\t学习率：{:.6f}\t准确率：{:.1f}%".format(batch, average_loss,
-                                                                                    optimizer.param_groups[0]['lr'],
+                print("第{}批次的损失：{:.6f}\t学习率：{:.6f}\t准确率：{:.1f}%".format(batch, average_loss, learning,
                                                                                     average_accuracy * 100))
 
         # 计算平均损失
@@ -59,5 +64,8 @@ def train(loader, model, criterion, optimizer, scheduler, epochs=10, IS_DEBUG=Fa
 
     if IS_DEBUG:
         # 输出损失图像
-        plt.plot(loss_seq)
+        plt.plot(loss_seq, color='red')
+        plt.plot(accuracy_seq, color='skyblue')
+        plt.plot(learning_seq, color='pink')
+        plt.legend()
         plt.show()
