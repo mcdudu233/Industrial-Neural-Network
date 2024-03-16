@@ -56,11 +56,12 @@ data_transform = transforms.Compose([
 
 
 # 显示图像
-def image_show(tensor):
+def image_show(tensor, title=None):
     tensor = tensor.numpy().transpose((1, 2, 0))
     # 归一化的还原
     tensor = np.array(std) * tensor + np.array(mean)
     tensor = np.clip(tensor, 0, 1)
+    plt.title(title)
     plt.imshow(tensor)
     plt.show()
 

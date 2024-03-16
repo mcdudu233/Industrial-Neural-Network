@@ -22,8 +22,6 @@ def train(loader, model, criterion, optimizer, scheduler, epochs=10, IS_DEBUG=Fa
             optimizer.zero_grad()
             # 模型给出的预测值
             output = model(input)
-            # TODO 转换成独热编码
-            actual = nn.functional.one_hot(actual).float()
             # 计算预测值和真实值的损失
             loss = criterion(output, actual)
             # 反向传播求梯度

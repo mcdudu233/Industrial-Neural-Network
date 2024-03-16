@@ -56,6 +56,5 @@ if __name__ == '__main__':
         model.eval()
         classes = ['cat', 'dog']
         for _, image in enumerate(test_data):
-            data.image_show(image[0])
             index = torch.argmax(model(image))
-            print(classes[index])
+            data.image_show(image[0], classes[index])
