@@ -1,7 +1,5 @@
 import matplotlib.pyplot as plt
-import tqdm
 from torch import nn
-from torch.autograd import Variable
 
 
 def train(loader, model, criterion, optimizer, scheduler, epochs=10, IS_DEBUG=False, IS_CUDA=False):
