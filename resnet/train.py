@@ -43,7 +43,7 @@ def train(loader, model, criterion, optimizer, scheduler, epochs=10, IS_DEBUG=Fa
             # 计算准确率
             total_accuracy += torch.sum(torch.max(output, dim=1)[1] == actual) / size
             average_accuracy = total_accuracy / batch
-            accuracy_seq.append(average_accuracy)
+            accuracy_seq.append(average_accuracy.item())
             # 计算学习率
             learning = optimizer.param_groups[0]['lr']
             learning_seq.append(learning)
