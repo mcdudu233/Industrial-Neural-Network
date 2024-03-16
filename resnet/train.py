@@ -48,10 +48,12 @@ def train(loader, model, criterion, optimizer, scheduler, epochs=10, IS_DEBUG=Fa
 
         # 计算平均损失
         average_loss = total_loss / batch
+        average_accuracy = total_accuracy / batch
         if IS_DEBUG:
             print("*" * 20)
             print("完成第{}次训练：".format(epoch))
             print("损失：{}".format(average_loss))
+            print("准确率：{}".format(average_accuracy))
             print("*" * 20)
     print("*" * 20)
 
