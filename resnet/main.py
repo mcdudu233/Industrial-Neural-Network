@@ -29,7 +29,7 @@ if __name__ == '__main__':
 
     # 超参数
     learning_rate = 0.018  # 初始学习率
-    learning_factor = 0.92  # 学习率调整因子
+    learning_factor = 0.88  # 学习率调整因子
 
     model = resnet34(2)  # 使用34层的resnet模型 加上softmax
     criterion = nn.CrossEntropyLoss()  # 损失计算器 均方误差
@@ -37,7 +37,7 @@ if __name__ == '__main__':
     scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer,  # 学习率调整器 ReduceLROnPlateau lr=lr*factor
                                                      mode='min',
                                                      factor=learning_factor,
-                                                     patience=80)
+                                                     patience=75)
 
     # 训练模型或者测试数据
     if IS_TRAIN:
