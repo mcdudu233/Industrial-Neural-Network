@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plt
-from torch import nn
+import torch
 
 
 def train(loader, model, criterion, optimizer, scheduler, epochs=10, IS_DEBUG=False, IS_CUDA=False):
@@ -10,6 +10,7 @@ def train(loader, model, criterion, optimizer, scheduler, epochs=10, IS_DEBUG=Fa
     loss_seq = []  # 损失率序列
     for epoch in range(1, epochs + 1):
         total_loss = 0  # 总共的损失
+        total_accuracy = 0  # 总共的准确率
         batch = 0  # 记录批次
         for _, data in enumerate(loader):
             input, actual = data
@@ -32,11 +33,18 @@ def train(loader, model, criterion, optimizer, scheduler, epochs=10, IS_DEBUG=Fa
             scheduler.step(loss)
 
             batch += 1
-            total_loss += loss.item() / input.size()[0]
+            size = input.size()[0]
+            # 计算损失
+            total_loss += loss.item() / size
             average_loss = total_loss / batch
             loss_seq.append(average_loss)
+            # 计算准确率
+            total_accuracy += torch.sum(torch.max(output, dim=1)[1] == actual) / size
+            average_accuracy = total_accuracy / batch
             if IS_DEBUG:
-                print("第{}批次的损失：{} 学习率：{}".format(batch, average_loss, optimizer.param_groups[0]['lr']))
+                print("第{}批次的损失：{:.6f}\t学习率：{:.6f}\t准确率：{:.3f}".format(batch, average_loss,
+                                                                                   optimizer.param_groups[0]['lr'],
+                                                                                   average_accuracy))
 
         # 计算平均损失
         average_loss = total_loss / batch

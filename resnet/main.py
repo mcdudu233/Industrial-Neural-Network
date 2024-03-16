@@ -1,4 +1,3 @@
-import matplotlib.pyplot as plt
 import torch
 from torch import nn, optim
 from model import resnet34
@@ -8,7 +7,7 @@ import data
 # 全局参数区
 IS_DEBUG = True  # 是否启用调试
 IS_CUDA = False  # 是否使用CUDA
-IS_TRAIN = False  # 是否训练模型 否则为评估
+IS_TRAIN = True  # 是否训练模型 否则为评估
 MODEL_PATH = "./model.pth"  # 模型存放位置
 
 
@@ -56,5 +55,5 @@ if __name__ == '__main__':
         model.eval()
         classes = ['cat', 'dog']
         for _, image in enumerate(test_data):
-            index = torch.argmax(model(image))
+            index = torch.max(model(image), dim=1)[1]
             data.image_show(image[0], classes[index])
