@@ -7,6 +7,8 @@ from torch.utils.data import DataLoader, Dataset
 from torchvision import transforms
 from torchvision.datasets import ImageFolder
 
+NUM_WORKERS = 4  # 数据读取线程数
+
 
 # 将所有4通道的图片统一为3通道图片
 def deal_with_channel(path):
@@ -73,12 +75,12 @@ def get_train_data(IS_DEBUG=False):
     if IS_DEBUG:
         print("标签数据：{}".format(data.class_to_idx))
 
-    loader = DataLoader(data, batch_size=64, shuffle=True)
+    loader = DataLoader(data, batch_size=64, shuffle=True, num_workers=NUM_WORKERS)
     return loader
 
 
 # 获得测试的数据集
 def get_test_data(IS_DEBUG=False):
     data = TestDataset('./data/test', transform=data_transform)
-    loader = DataLoader(data, batch_size=1, shuffle=False)
+    loader = DataLoader(data, batch_size=1, shuffle=False, num_workers=NUM_WORKERS)
     return loader
