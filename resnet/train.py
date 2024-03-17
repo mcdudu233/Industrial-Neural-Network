@@ -48,7 +48,7 @@ def train(loader, model, criterion, optimizer, scheduler, epochs=10, IS_DEBUG=Fa
             learning = optimizer.param_groups[0]['lr']
             learning_seq.append(learning)
             if IS_DEBUG:
-                print("第{}批次的损失：{:.6f}\t学习率：{:.6f}\t准确率：{:.1f}%".format(batch, average_loss, learning,
+                print("第{}批次的损失：{:.8f}\t学习率：{:.8f}\t准确率：{:.1f}%".format(batch, average_loss, learning,
                                                                                     average_accuracy * 100))
 
         # 计算平均损失
