@@ -64,8 +64,16 @@ def train(loader, model, criterion, optimizer, scheduler, epochs=10, IS_DEBUG=Fa
 
     if IS_DEBUG:
         # 输出损失图像
-        plt.plot(loss_seq, color='red')
-        plt.plot(accuracy_seq, color='skyblue')
+        plt.subplot(2, 2, 1)
+        plt.title("loss")
+        plt.plot(loss_seq[1:], color='red')
+
+        plt.subplot(2, 2, 2)
+        plt.title("learning rate")
         plt.plot(learning_seq, color='pink')
-        plt.legend()
+
+        plt.subplot(2, 2, 3)
+        plt.title("accuracy")
+        plt.plot(accuracy_seq, color='skyblue')
+
         plt.show()
