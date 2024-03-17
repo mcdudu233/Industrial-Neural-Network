@@ -28,8 +28,8 @@ if __name__ == '__main__':
     init()
 
     # 超参数
-    learning_rate = 0.0185  # 初始学习率
-    learning_factor = 0.890  # 学习率调整因子
+    learning_rate = 0.0195  # 初始学习率
+    learning_factor = 0.855  # 学习率调整因子
 
     model = resnet34(2)  # 使用34层的resnet模型 加上softmax
     criterion = nn.CrossEntropyLoss()  # 损失计算器 均方误差
@@ -45,7 +45,7 @@ if __name__ == '__main__':
         train_data = data.get_train_data(IS_DEBUG)
         # 训练模型
         model.train()
-        train(train_data, model, criterion, optimizer, scheduler, epochs=1, IS_DEBUG=IS_DEBUG, IS_CUDA=IS_CUDA)
+        train(train_data, model, criterion, optimizer, scheduler, epochs=30, IS_DEBUG=IS_DEBUG, IS_CUDA=IS_CUDA)
         # 保存训练好的模型
         torch.save(model.state_dict(), MODEL_PATH)
     else:
