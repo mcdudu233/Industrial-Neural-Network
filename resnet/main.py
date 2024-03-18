@@ -3,6 +3,7 @@ from torch import nn, optim
 
 from model import resnet34
 from train import train
+from predict import predict
 import data
 
 # 全局参数区
@@ -31,7 +32,7 @@ if __name__ == '__main__':
     learning_rate = 0.0010  # 初始学习率
     learning_factor = 0.780  # 学习率调整因子
 
-    model = resnet34(2)  # 使用34层的resnet模型 加上softmax
+    model = resnet34(2)  # 使用34层的resnet模型
     criterion = nn.CrossEntropyLoss()  # 损失计算器 均方误差
     optimizer = optim.Adam(model.parameters(), lr=learning_rate)  # 优化器 Adam优化
     scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer,  # 学习率调整器 ReduceLROnPlateau lr=lr*factor
@@ -54,7 +55,4 @@ if __name__ == '__main__':
         test_data = data.get_test_data(IS_DEBUG)
         # 评估模型
         model.eval()
-        classes = ['cat', 'dog']
-        for _, image in enumerate(test_data):
-            index = torch.max(model(image), dim=1)[1]
-            data.image_show(image[0], classes[index])
+        predict(test_data, model, IS_DEBUG=IS_DEBUG, IS_CUDA=IS_CUDA)
