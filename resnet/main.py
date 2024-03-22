@@ -30,7 +30,7 @@ if __name__ == '__main__':
 
     # 超参数
     learning_rate = 0.0020  # 初始学习率
-    learning_factor = 0.890  # 学习率调整因子
+    learning_factor = 0.900  # 学习率调整因子
 
     model = resnet34(2)  # 使用34层的resnet模型
     criterion = nn.CrossEntropyLoss()  # 损失计算器 均方误差
