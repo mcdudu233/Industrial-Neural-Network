@@ -8,7 +8,7 @@ from torch.utils.data import DataLoader, Dataset
 from torchvision import transforms
 from torchvision.datasets import ImageFolder
 
-NUM_WORKERS = 4  # 数据读取线程数
+NUM_WORKERS = 8  # 数据读取线程数
 
 
 # 将所有4通道的图片统一为3通道图片
@@ -97,7 +97,7 @@ def get_train_data(IS_DEBUG=False):
     if IS_DEBUG:
         print("标签数据：{}".format(data.class_to_idx))
 
-    loader = DataLoader(data, batch_size=64, shuffle=True, num_workers=NUM_WORKERS)
+    loader = DataLoader(data, batch_size=32, shuffle=True, num_workers=NUM_WORKERS)
     return loader
 
 
