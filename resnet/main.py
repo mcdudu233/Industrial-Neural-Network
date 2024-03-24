@@ -9,7 +9,7 @@ import data
 # 全局参数区
 IS_DEBUG = True  # 是否启用调试
 IS_CUDA = False  # 是否使用CUDA
-IS_TRAIN = True  # 是否训练模型 否则为评估
+IS_TRAIN = False  # 是否训练模型 否则为评估
 MODEL_PATH = "./model.pth"  # 模型存放位置
 
 
@@ -51,7 +51,11 @@ if __name__ == '__main__':
         torch.save(model.state_dict(), MODEL_PATH)
     else:
         # 加载训练好的模型和测试数据
-        model.load_state_dict(torch.load(MODEL_PATH))
+        if IS_CUDA:
+            loader = torch.load(MODEL_PATH)
+        else:
+            loader = torch.load(MODEL_PATH, 'cpu')
+        model.load_state_dict(loader)
         test_data = data.get_test_data(IS_DEBUG)
         # 评估模型
         model.eval()
