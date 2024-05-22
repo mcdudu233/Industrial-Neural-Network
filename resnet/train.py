@@ -67,24 +67,21 @@ def train(loader, model, criterion, optimizer, scheduler, epochs=10, IS_DEBUG=Fa
 
     if IS_DEBUG:
         # 指定画图的字体
-        font = FontProperties(fname="C:\Windows\宋体.ttf")  # 指定字体路径
+        font = FontProperties(fname="C:\Windows\Fonts\msyh.ttc")  # 指定字体路径
 
         # 输出损失图像
-        plt.subplot(2, 2, 1)
         plt.title("损失", fontproperties=font)
         plt.xlabel("批次", fontproperties=font)
         plt.ylabel("损失率", fontproperties=font)
         plt.plot(loss_seq[1:], color='red')
         plt.show()
 
-        plt.subplot(2, 2, 2)
         plt.title("学习率", fontproperties=font)
         plt.xlabel("批次", fontproperties=font)
         plt.ylabel("百分比", fontproperties=font)
         plt.plot(learning_seq, color='pink')
         plt.show()
 
-        plt.subplot(2, 2, 3)
         plt.title("准确度", fontproperties=font)
         plt.xlabel("批次", fontproperties=font)
         plt.ylabel("百分比", fontproperties=font)
