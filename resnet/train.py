@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import torch
+from matplotlib.font_manager import FontProperties
 
 
 def train(loader, model, criterion, optimizer, scheduler, epochs=10, IS_DEBUG=False, IS_CUDA=False):
@@ -39,11 +40,13 @@ def train(loader, model, criterion, optimizer, scheduler, epochs=10, IS_DEBUG=Fa
             # 计算损失
             average_loss = loss.item() / size
             total_loss += average_loss
-            loss_seq.append(average_loss)
+            # loss_seq.append(average_loss)
+            loss_seq.append(total_loss / batch)
             # 计算准确率
             average_accuracy = torch.sum(torch.max(output, dim=1)[1] == actual) / size
             total_accuracy += average_accuracy
-            accuracy_seq.append(average_accuracy.item())
+            # accuracy_seq.append(average_accuracy.item())
+            accuracy_seq.append(total_accuracy.item() / batch)
             # 计算学习率
             learning = optimizer.param_groups[0]['lr']
             learning_seq.append(learning)
@@ -63,17 +66,27 @@ def train(loader, model, criterion, optimizer, scheduler, epochs=10, IS_DEBUG=Fa
     print("*" * 20)
 
     if IS_DEBUG:
+        # 指定画图的字体
+        font = FontProperties(fname="C:\Windows\宋体.ttf")  # 指定字体路径
+
         # 输出损失图像
         plt.subplot(2, 2, 1)
-        plt.title("loss")
+        plt.title("损失", fontproperties=font)
+        plt.xlabel("批次", fontproperties=font)
+        plt.ylabel("损失率", fontproperties=font)
         plt.plot(loss_seq[1:], color='red')
+        plt.show()
 
         plt.subplot(2, 2, 2)
-        plt.title("learning rate")
+        plt.title("学习率", fontproperties=font)
+        plt.xlabel("批次", fontproperties=font)
+        plt.ylabel("百分比", fontproperties=font)
         plt.plot(learning_seq, color='pink')
+        plt.show()
 
         plt.subplot(2, 2, 3)
-        plt.title("accuracy")
+        plt.title("准确度", fontproperties=font)
+        plt.xlabel("批次", fontproperties=font)
+        plt.ylabel("百分比", fontproperties=font)
         plt.plot(accuracy_seq, color='skyblue')
-
         plt.show()

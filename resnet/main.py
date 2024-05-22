@@ -9,7 +9,7 @@ import data
 # 全局参数区
 IS_DEBUG = True  # 是否启用调试
 IS_CUDA = False  # 是否使用CUDA
-IS_TRAIN = False  # 是否训练模型 否则为评估
+IS_TRAIN = True  # 是否训练模型 否则为评估
 MODEL_PATH = "./model.pth"  # 模型存放位置
 
 
@@ -46,7 +46,7 @@ if __name__ == '__main__':
         train_data = data.get_train_data(IS_DEBUG)
         # 训练模型
         model.train()
-        train(train_data, model, criterion, optimizer, scheduler, epochs=30, IS_DEBUG=IS_DEBUG, IS_CUDA=IS_CUDA)
+        train(train_data, model, criterion, optimizer, scheduler, epochs=1, IS_DEBUG=IS_DEBUG, IS_CUDA=IS_CUDA)
         # 保存训练好的模型
         torch.save(model.state_dict(), MODEL_PATH)
     else:
