@@ -1,10 +1,10 @@
 import torch
 from torch import nn, optim
 
-from model import resnet34
-from train import train
-from predict import predict
 import data
+from predict import predict
+from resnet.model_revise import resnet_revise
+from train import train
 
 # 全局参数区
 IS_DEBUG = True  # 是否启用调试
@@ -25,20 +25,22 @@ def init():
             print("检测到显卡，将使用显卡：" + torch.cuda.get_device_name())
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     init()
 
     # 超参数
     learning_rate = 0.0020  # 初始学习率
     learning_factor = 0.900  # 学习率调整因子
 
-    model = resnet34(2)  # 使用34层的resnet模型
+    model = resnet_revise(2)  # 修改的resnet模型
     criterion = nn.CrossEntropyLoss()  # 损失计算器 均方误差
     optimizer = optim.Adam(model.parameters(), lr=learning_rate)  # 优化器 Adam优化
-    scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer,  # 学习率调整器 ReduceLROnPlateau lr=lr*factor
-                                                     mode='min',
-                                                     factor=learning_factor,
-                                                     patience=128)
+    scheduler = optim.lr_scheduler.ReduceLROnPlateau(
+        optimizer,  # 学习率调整器 ReduceLROnPlateau lr=lr*factor
+        mode="min",
+        factor=learning_factor,
+        patience=128,
+    )
 
     # 训练模型或者测试数据
     if IS_TRAIN:
@@ -46,7 +48,16 @@ if __name__ == '__main__':
         train_data = data.get_train_data(IS_DEBUG)
         # 训练模型
         model.train()
-        train(train_data, model, criterion, optimizer, scheduler, epochs=1, IS_DEBUG=IS_DEBUG, IS_CUDA=IS_CUDA)
+        train(
+            train_data,
+            model,
+            criterion,
+            optimizer,
+            scheduler,
+            epochs=30,
+            IS_DEBUG=IS_DEBUG,
+            IS_CUDA=IS_CUDA,
+        )
         # 保存训练好的模型
         torch.save(model.state_dict(), MODEL_PATH)
     else:
@@ -54,7 +65,7 @@ if __name__ == '__main__':
         if IS_CUDA:
             loader = torch.load(MODEL_PATH)
         else:
-            loader = torch.load(MODEL_PATH, 'cpu')
+            loader = torch.load(MODEL_PATH, "cpu")
         model.load_state_dict(loader)
         test_data = data.get_test_data(IS_DEBUG)
         # 评估模型

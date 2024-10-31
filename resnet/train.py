@@ -3,7 +3,16 @@ import torch
 from matplotlib.font_manager import FontProperties
 
 
-def train(loader, model, criterion, optimizer, scheduler, epochs=10, IS_DEBUG=False, IS_CUDA=False):
+def train(
+    loader,
+    model,
+    criterion,
+    optimizer,
+    scheduler,
+    epochs=10,
+    IS_DEBUG=False,
+    IS_CUDA=False,
+):
     if IS_CUDA:
         # 模型转交给显卡
         model.cuda()
@@ -14,8 +23,7 @@ def train(loader, model, criterion, optimizer, scheduler, epochs=10, IS_DEBUG=Fa
     for epoch in range(1, epochs + 1):
         total_loss = 0  # 总共的损失
         total_accuracy = 0  # 总共的准确率
-        batch = 0  # 记录批次
-        for _, data in enumerate(loader):
+        for batch, data in enumerate(loader, 1):
             input, actual = data
             if IS_CUDA:
                 # 将数据转移到显卡上
@@ -35,7 +43,6 @@ def train(loader, model, criterion, optimizer, scheduler, epochs=10, IS_DEBUG=Fa
             # 学习率调整
             scheduler.step(loss)
 
-            batch += 1
             size = input.size()[0]
             # 计算损失
             average_loss = loss.item() / size
@@ -48,11 +55,14 @@ def train(loader, model, criterion, optimizer, scheduler, epochs=10, IS_DEBUG=Fa
             # accuracy_seq.append(average_accuracy.item())
             accuracy_seq.append(total_accuracy.item() / batch)
             # 计算学习率
-            learning = optimizer.param_groups[0]['lr']
+            learning = optimizer.param_groups[0]["lr"]
             learning_seq.append(learning)
             if IS_DEBUG:
-                print("第{}批次的损失：{:.8f}\t学习率：{:.8f}\t准确率：{:.1f}%".format(batch, average_loss, learning,
-                                                                                    average_accuracy * 100))
+                print(
+                    "第{}批次的损失：{:.8f}\t学习率：{:.8f}\t准确率：{:.1f}%".format(
+                        batch, average_loss, learning, average_accuracy * 100
+                    )
+                )
 
         # 计算平均损失
         average_loss = total_loss / batch
@@ -73,17 +83,17 @@ def train(loader, model, criterion, optimizer, scheduler, epochs=10, IS_DEBUG=Fa
         plt.title("损失", fontproperties=font)
         plt.xlabel("批次", fontproperties=font)
         plt.ylabel("损失率", fontproperties=font)
-        plt.plot(loss_seq[1:], color='red')
+        plt.plot(loss_seq[1:], color="red")
         plt.show()
 
         plt.title("学习率", fontproperties=font)
         plt.xlabel("批次", fontproperties=font)
         plt.ylabel("百分比", fontproperties=font)
-        plt.plot(learning_seq, color='pink')
+        plt.plot(learning_seq, color="pink")
         plt.show()
 
         plt.title("准确度", fontproperties=font)
         plt.xlabel("批次", fontproperties=font)
         plt.ylabel("百分比", fontproperties=font)
-        plt.plot(accuracy_seq, color='skyblue')
+        plt.plot(accuracy_seq, color="skyblue")
         plt.show()
