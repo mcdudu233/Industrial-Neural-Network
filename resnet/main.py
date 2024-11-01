@@ -1,3 +1,5 @@
+import os.path
+
 import torch
 from torch import nn, optim
 
@@ -29,7 +31,7 @@ if __name__ == "__main__":
     init()
 
     # 超参数
-    learning_rate = 0.0020  # 初始学习率
+    learning_rate = 0.0001  # 初始学习率
     learning_factor = 0.900  # 学习率调整因子
 
     model = resnet_revise(2)  # 修改的resnet模型
@@ -39,9 +41,16 @@ if __name__ == "__main__":
         optimizer,  # 学习率调整器 ReduceLROnPlateau lr=lr*factor
         mode="min",
         factor=learning_factor,
-        patience=128,
+        patience=32,
     )
 
+    # 加载训练好的模型和测试数据
+    if os.path.exists(MODEL_PATH):
+        if IS_CUDA:
+            loader = torch.load(MODEL_PATH)
+        else:
+            loader = torch.load(MODEL_PATH, "cpu")
+        model.load_state_dict(loader)
     # 训练模型或者测试数据
     if IS_TRAIN:
         # 获取训练数据
@@ -54,19 +63,13 @@ if __name__ == "__main__":
             criterion,
             optimizer,
             scheduler,
-            epochs=30,
+            epochs=5,
             IS_DEBUG=IS_DEBUG,
             IS_CUDA=IS_CUDA,
         )
         # 保存训练好的模型
         torch.save(model.state_dict(), MODEL_PATH)
     else:
-        # 加载训练好的模型和测试数据
-        if IS_CUDA:
-            loader = torch.load(MODEL_PATH)
-        else:
-            loader = torch.load(MODEL_PATH, "cpu")
-        model.load_state_dict(loader)
         test_data = data.get_test_data(IS_DEBUG)
         # 评估模型
         model.eval()

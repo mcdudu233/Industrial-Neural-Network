@@ -22,12 +22,16 @@ def deal_with_channel(path):
 
 # 获取图片的均值和方差
 def get_image_status(path):
-    transform = transforms.Compose([
-        transforms.Resize((256, 256)),
-        transforms.ToTensor(),
-    ])
+    transform = transforms.Compose(
+        [
+            transforms.Resize((256, 256)),
+            transforms.ToTensor(),
+        ]
+    )
     train_data = ImageFolder(path, transform=transform)
-    train_loader = DataLoader(train_data, batch_size=1, shuffle=False, num_workers=0, pin_memory=True)
+    train_loader = DataLoader(
+        train_data, batch_size=1, shuffle=False, num_workers=0, pin_memory=True
+    )
     mean = torch.zeros(3)
     std = torch.zeros(3)
     for X, _ in train_loader:
@@ -72,11 +76,13 @@ class TestDataset(Dataset):
 
 mean = [0.48765466, 0.45418832, 0.41671938]  # 均值
 std = [0.22593492, 0.2212625, 0.2214118]  # 标准差
-data_transform = transforms.Compose([
-    transforms.Resize((256, 256)),  # 256x256分辨率
-    transforms.ToTensor(),  # 转换到张量
-    transforms.Normalize(mean, std)  # 归一化
-])
+data_transform = transforms.Compose(
+    [
+        transforms.Resize((256, 256)),  # 256x256分辨率
+        transforms.ToTensor(),  # 转换到张量
+        transforms.Normalize(mean, std),  # 归一化
+    ]
+)
 
 
 # 显示图像
@@ -92,17 +98,17 @@ def image_show(tensor, title=None):
 
 # 获得训练的数据集
 def get_train_data(IS_DEBUG=False):
-    data = ImageFolder('./data/train', transform=data_transform)
+    data = ImageFolder("./data/train", transform=data_transform)
 
     if IS_DEBUG:
         print("标签数据：{}".format(data.class_to_idx))
 
-    loader = DataLoader(data, batch_size=32, shuffle=True, num_workers=NUM_WORKERS)
+    loader = DataLoader(data, batch_size=64, shuffle=True, num_workers=NUM_WORKERS)
     return loader
 
 
 # 获得测试的数据集
 def get_test_data(IS_DEBUG=False):
-    data = TestDataset('./data/test', transform=data_transform)
+    data = TestDataset("./data/test", transform=data_transform)
     loader = DataLoader(data, batch_size=1, shuffle=False, num_workers=NUM_WORKERS)
     return loader
