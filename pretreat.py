@@ -33,7 +33,7 @@ def merge(files):
     print(csv.describe())
 
     # 打乱数据
-    csv.sample()
+    csv = csv.sample(frac=1.0).reset_index(drop=True)
 
     # 保存
     csv.to_csv("./data/data.csv", index=False)
@@ -74,7 +74,7 @@ if __name__ == "__main__":
     # for key in files:
     #     transform_from_origin(key, files[key])
 
-    # merge(files)
+    merge(files)
 
     #      , Channel1, Channel2, Channel3, Channel4, Channel5, Channel6, Channel7, Channel8
     # count, 5242800.0, 5242800.0, 5242800.0, 5242800.0, 5242800.0, 5242800.0, 5242800.0, 5242800.0
