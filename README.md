@@ -16,6 +16,18 @@
 │  
 └─resnet -->resnet框架测试
 
+#### 使用数据集
+
+[东南大学数据集](https://github.com/cathysiyu/Mechanical-datasets/tree/master/gearbox/gearset)
+
+使用以下数据：
+
+- Chipped_30_2.csv
+- Health_30_2.csv
+- Miss_30_2.csv
+- Root_30_2.csv
+- Surface_30_2.csv
+
 #### 参与贡献
 
 1. Fork 本仓库
