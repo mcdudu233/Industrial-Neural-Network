@@ -1,48 +1,12 @@
 import os
 
-import matplotlib.pyplot as plt
-import numpy as np
-import torch
 from PIL import Image
-from torch.utils.data import DataLoader, Dataset
-from torchvision import transforms
-from torchvision.datasets import ImageFolder
+from torch.utils.data import Dataset
 
 NUM_WORKERS = 8  # 数据读取线程数
 
-
-# 将所有4通道的图片统一为3通道图片
-def deal_with_channel(path):
-    for file_name in os.listdir(path):
-        file = os.path.join(path, file_name)
-        img = Image.open(file)
-        img = img.convert("RGB")
-        img.save(file)
-
-
-# 获取图片的均值和方差
-def get_image_status(path):
-    transform = transforms.Compose(
-        [
-            transforms.Resize((256, 256)),
-            transforms.ToTensor(),
-        ]
-    )
-    train_data = ImageFolder(path, transform=transform)
-    train_loader = DataLoader(
-        train_data, batch_size=1, shuffle=False, num_workers=0, pin_memory=True
-    )
-    mean = torch.zeros(3)
-    std = torch.zeros(3)
-    for X, _ in train_loader:
-        for d in range(3):
-            mean[d] += X[:, d, :, :].mean()
-            std[d] += X[:, d, :, :].std()
-    mean.div_(len(train_data))
-    std.div_(len(train_data))
-    print(list(mean.numpy()))
-    print(list(std.numpy()))
-    return list(mean.numpy()), list(std.numpy())
+# torch.Size([64, 3, 256, 256])
+# torch.Size([64])
 
 
 # 测试数据集加载器
@@ -73,42 +37,17 @@ class TestDataset(Dataset):
             img = self.transform(img)
         return img
 
-
-mean = [0.48765466, 0.45418832, 0.41671938]  # 均值
-std = [0.22593492, 0.2212625, 0.2214118]  # 标准差
-data_transform = transforms.Compose(
-    [
-        transforms.Resize((256, 256)),  # 256x256分辨率
-        transforms.ToTensor(),  # 转换到张量
-        transforms.Normalize(mean, std),  # 归一化
-    ]
-)
-
-
-# 显示图像
-def image_show(tensor, title=None):
-    tensor = tensor.numpy().transpose((1, 2, 0))
-    # 归一化的还原
-    tensor = np.array(std) * tensor + np.array(mean)
-    tensor = np.clip(tensor, 0, 1)
-    plt.title(title)
-    plt.imshow(tensor)
-    plt.show()
+# 均值
+mean = [-0.13227930850976577,0.0009032072751201647,0.000668213336575875,0.0010861044115739683,8.736464503700307e-05,-0.00042250074082551245,0.00033605961318379496,-0.00011272781509880225]
+# 标准差
+std = [0.021324149408854822,0.008439523316886572,0.01693572440418254,0.012510887614921454,0.020240274870162618,0.016078401353789913,0.01790334344388813,0.02377909824570553]
 
 
 # 获得训练的数据集
 def get_train_data(IS_DEBUG=False):
-    data = ImageFolder("./data/train", transform=data_transform)
-
-    if IS_DEBUG:
-        print("标签数据：{}".format(data.class_to_idx))
-
-    loader = DataLoader(data, batch_size=64, shuffle=True, num_workers=NUM_WORKERS)
-    return loader
+    pass
 
 
 # 获得测试的数据集
 def get_test_data(IS_DEBUG=False):
-    data = TestDataset("./data/test", transform=data_transform)
-    loader = DataLoader(data, batch_size=1, shuffle=False, num_workers=NUM_WORKERS)
-    return loader
+    pass
