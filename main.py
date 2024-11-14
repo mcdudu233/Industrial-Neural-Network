@@ -41,7 +41,7 @@ if __name__ == "__main__":
         optimizer,  # 学习率调整器 ReduceLROnPlateau lr=lr*factor
         mode="min",
         factor=learning_factor,
-        patience=64,
+        patience=128,
     )
 
     # 加载训练好的模型和测试数据

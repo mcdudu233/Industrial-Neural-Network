@@ -68,9 +68,10 @@ class IndustrialDataset(Dataset):
         x = tmp[0:6].values
         x = x.astype(np.float32)
         y = self.class_to_idx[tmp["Type"]]
-
-        x = torch.tensor(x, dtype=torch.float)
-        return torch.tensor([x], dtype=torch.float), torch.tensor(y, dtype=torch.long)
+        return (
+            torch.tensor(np.array([x]), dtype=torch.float),
+            torch.tensor(y, dtype=torch.long),
+        )
 
 
 # 获得训练的数据集
