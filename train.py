@@ -10,10 +10,9 @@ def train(
     optimizer,
     scheduler,
     epochs=10,
-    IS_DEBUG=False,
-    IS_CUDA=False,
+    cuda=False,
 ):
-    if IS_CUDA:
+    if cuda:
         # 模型转交给显卡
         model.cuda()
 
@@ -25,7 +24,7 @@ def train(
         total_accuracy = 0  # 总共的准确率
         for batch, data in enumerate(loader, 1):
             input, actual = data
-            if IS_CUDA:
+            if cuda:
                 # 将数据转移到显卡上
                 input = input.cuda()
                 actual = actual.cuda()
@@ -67,33 +66,31 @@ def train(
         # 计算平均损失
         average_loss = total_loss / batch
         average_accuracy = total_accuracy / batch
-        if IS_DEBUG:
-            print("*" * 20)
-            print("完成第{}次训练：".format(epoch))
-            print("损失：{}".format(average_loss))
-            print("准确率：{}".format(average_accuracy))
-            print("*" * 20)
+        print("*" * 20)
+        print("完成第{}次训练：".format(epoch))
+        print("损失：{}".format(average_loss))
+        print("准确率：{}".format(average_accuracy))
+        print("*" * 20)
     print("*" * 20)
 
-    if IS_DEBUG:
-        # 指定画图的字体
-        font = FontProperties(fname="C:\Windows\Fonts\msyh.ttc")  # 指定字体路径
+    # 指定画图的字体
+    font = FontProperties(fname="C:\Windows\Fonts\msyh.ttc")  # 指定字体路径
 
-        # 输出损失图像
-        plt.title("损失", fontproperties=font)
-        plt.xlabel("批次", fontproperties=font)
-        plt.ylabel("损失率", fontproperties=font)
-        plt.plot(loss_seq[1:], color="red")
-        plt.show()
+    # 输出损失图像
+    plt.title("损失", fontproperties=font)
+    plt.xlabel("批次", fontproperties=font)
+    plt.ylabel("损失率", fontproperties=font)
+    plt.plot(loss_seq[1:], color="red")
+    plt.show()
 
-        plt.title("学习率", fontproperties=font)
-        plt.xlabel("批次", fontproperties=font)
-        plt.ylabel("百分比", fontproperties=font)
-        plt.plot(learning_seq, color="pink")
-        plt.show()
+    plt.title("学习率", fontproperties=font)
+    plt.xlabel("批次", fontproperties=font)
+    plt.ylabel("百分比", fontproperties=font)
+    plt.plot(learning_seq, color="pink")
+    plt.show()
 
-        plt.title("准确度", fontproperties=font)
-        plt.xlabel("批次", fontproperties=font)
-        plt.ylabel("百分比", fontproperties=font)
-        plt.plot(accuracy_seq, color="skyblue")
-        plt.show()
+    plt.title("准确度", fontproperties=font)
+    plt.xlabel("批次", fontproperties=font)
+    plt.ylabel("百分比", fontproperties=font)
+    plt.plot(accuracy_seq, color="skyblue")
+    plt.show()
