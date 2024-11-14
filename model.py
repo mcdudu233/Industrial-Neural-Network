@@ -9,8 +9,8 @@ class BasicBlockRevise(nn.Module):
     def __init__(self, in_channel, out_channel, stride=1, downsample=None, **kwargs):
         super(BasicBlockRevise, self).__init__()
 
-        # 第一层3x3卷积层
-        self.conv1 = nn.Conv2d(
+        # 第一层3个参数卷积层
+        self.conv1 = nn.Conv1d(
             in_channels=in_channel,
             out_channels=out_channel,
             kernel_size=3,
@@ -20,8 +20,8 @@ class BasicBlockRevise(nn.Module):
         )
         self.gn1 = nn.GroupNorm(32, out_channel)
 
-        # 第二层3x3卷积层
-        self.conv2 = nn.Conv2d(
+        # 第二层3个参数卷积层
+        self.conv2 = nn.Conv1d(
             in_channels=out_channel,
             out_channels=out_channel,
             kernel_size=3,
@@ -76,12 +76,12 @@ class ResNetRevise(nn.Module):
         self.groups = groups
         self.width_per_group = width_per_group
 
-        self.conv1 = nn.Conv2d(
-            3, self.in_channel, kernel_size=7, stride=2, padding=3, bias=False
+        self.conv1 = nn.Conv1d(
+            1, self.in_channel, kernel_size=7, stride=2, padding=3, bias=False
         )
-        self.bn1 = nn.BatchNorm2d(self.in_channel)
+        self.bn1 = nn.BatchNorm1d(self.in_channel)
         self.relu = nn.ReLU(inplace=True)
-        self.maxpool = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
+        self.maxpool = nn.MaxPool1d(kernel_size=3, stride=2, padding=1)
         # 浅层的stride=1，深层的stride=2
         # block：定义的两种残差模块
         # block_num：模块中残差块的个数
@@ -91,7 +91,7 @@ class ResNetRevise(nn.Module):
         self.layer4 = self._make_layer(block, 512, blocks_num[3], stride=2)
         if self.include_top:
             # 自适应平均池化，指定输出（H，W），通道数不变
-            self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
+            self.avgpool = nn.AdaptiveAvgPool1d(1)
             # 全连接层
             self.fc = nn.Linear(512 * block.expansion, num_classes)
         # 遍历网络中的每一层
@@ -111,14 +111,14 @@ class ResNetRevise(nn.Module):
         # 如果满足条件，则是虚线残差结构
         if stride != 1 or self.in_channel != channel * block.expansion:
             downsample = nn.Sequential(
-                nn.Conv2d(
+                nn.Conv1d(
                     self.in_channel,
                     channel * block.expansion,
                     kernel_size=1,
                     stride=stride,
                     bias=False,
                 ),
-                nn.BatchNorm2d(channel * block.expansion),
+                nn.BatchNorm1d(channel * block.expansion),
             )
 
         layers = []
