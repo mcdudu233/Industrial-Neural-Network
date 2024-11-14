@@ -74,7 +74,7 @@ if __name__ == "__main__":
     # for key in files:
     #     transform_from_origin(key, files[key])
 
-    merge(files)
+    # merge(files)
 
     #      , Channel1, Channel2, Channel3, Channel4, Channel5, Channel6, Channel7, Channel8
     # count, 5242800.0, 5242800.0, 5242800.0, 5242800.0, 5242800.0, 5242800.0, 5242800.0, 5242800.0
@@ -86,4 +86,9 @@ if __name__ == "__main__":
     # 75 %, -0.119635, 0.006195, 0.010822, 0.008668, 0.012058, 0.009365, 0.010935, 0.012901
     # max, -0.049958, 0.072213, 0.166225, 0.114346, 0.110906, 0.152502, 0.163131, 0.216211
 
-    split()
+    # split()
+
+    # 测试
+    data = pd.read_csv("./data/train.csv")
+    print(data.head())
+    print(int(data.count(axis=0).values.mean()))

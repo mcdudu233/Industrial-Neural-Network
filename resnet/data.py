@@ -103,7 +103,7 @@ def get_train_data(IS_DEBUG=False):
     if IS_DEBUG:
         print("标签数据：{}".format(data.class_to_idx))
 
-    loader = DataLoader(data, batch_size=64, shuffle=True, num_workers=NUM_WORKERS)
+    loader = DataLoader(data, batch_size=32, shuffle=True, num_workers=NUM_WORKERS)
     return loader
 
 

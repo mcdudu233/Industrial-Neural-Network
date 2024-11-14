@@ -31,7 +31,7 @@ if __name__ == "__main__":
     init()
 
     # 超参数
-    learning_rate = 0.0001  # 初始学习率
+    learning_rate = 0.00003  # 初始学习率
     learning_factor = 0.900  # 学习率调整因子
 
     model = resnet_revise(2)  # 修改的resnet模型
@@ -41,7 +41,7 @@ if __name__ == "__main__":
         optimizer,  # 学习率调整器 ReduceLROnPlateau lr=lr*factor
         mode="min",
         factor=learning_factor,
-        patience=32,
+        patience=64,
     )
 
     # 加载训练好的模型和测试数据
@@ -63,7 +63,7 @@ if __name__ == "__main__":
             criterion,
             optimizer,
             scheduler,
-            epochs=5,
+            epochs=3,
             IS_DEBUG=IS_DEBUG,
             IS_CUDA=IS_CUDA,
         )
