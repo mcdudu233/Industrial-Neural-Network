@@ -5,6 +5,8 @@ from torch.utils.data import Dataset, DataLoader
 
 # 数据读取线程数
 NUM_WORKERS = 4
+# 每批次训练的数据
+BATCH_SIZE = 64
 
 # torch.Size([64, 3, 256, 256])
 # torch.Size([64])
@@ -66,18 +68,22 @@ class IndustrialDataset(Dataset):
         x = tmp[0:6].values
         x = x.astype(np.float32)
         y = self.class_to_idx[tmp["Type"]]
-        return torch.tensor(x, dtype=torch.float), torch.tensor(y, dtype=torch.float)
+        return torch.tensor([x], dtype=torch.float), torch.tensor(y, dtype=torch.long)
 
 
 # 获得训练的数据集
 def get_train_data():
     data = IndustrialDataset("./data/train.csv")
-    loader = DataLoader(data, batch_size=32, shuffle=True, num_workers=NUM_WORKERS)
+    loader = DataLoader(
+        data, batch_size=BATCH_SIZE, shuffle=True, num_workers=NUM_WORKERS
+    )
     return loader
 
 
 # 获得测试的数据集
 def get_test_data():
     data = IndustrialDataset("./data/test.csv")
-    loader = DataLoader(data, batch_size=32, shuffle=True, num_workers=NUM_WORKERS)
+    loader = DataLoader(
+        data, batch_size=BATCH_SIZE, shuffle=True, num_workers=NUM_WORKERS
+    )
     return loader
