@@ -4,7 +4,7 @@ import torch
 from torch.utils.data import Dataset, DataLoader
 
 # 数据读取线程数
-NUM_WORKERS = 4
+NUM_WORKERS = 8
 # 每批次训练的数据
 BATCH_SIZE = 64
 
@@ -68,6 +68,8 @@ class IndustrialDataset(Dataset):
         x = tmp[0:6].values
         x = x.astype(np.float32)
         y = self.class_to_idx[tmp["Type"]]
+
+        x = torch.tensor(x, dtype=torch.float)
         return torch.tensor([x], dtype=torch.float), torch.tensor(y, dtype=torch.long)
 
 

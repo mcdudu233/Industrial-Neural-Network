@@ -56,11 +56,13 @@ def train(
             # 计算学习率
             learning = optimizer.param_groups[0]["lr"]
             learning_seq.append(learning)
-            print(
-                "第{}批次的损失：{:.8f}\t学习率：{:.8f}\t准确率：{:.1f}%".format(
-                    batch, average_loss, learning, average_accuracy * 100
+
+            if batch % 20 == 0:
+                print(
+                    "第{}批次的损失：{:.8f}\t学习率：{:.8f}\t准确率：{:.1f}%".format(
+                        batch, average_loss, learning, average_accuracy * 100
+                    )
                 )
-            )
 
         # 计算平均损失
         average_loss = total_loss / batch
