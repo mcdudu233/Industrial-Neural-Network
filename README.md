@@ -18,15 +18,11 @@
 
 #### 使用数据集
 
-[东南大学数据集](https://github.com/cathysiyu/Mechanical-datasets/tree/master/gearbox/gearset)
+[齿轮检测训练集](https://drive.google.com/file/d/1CZo-Ab5BXkTjV-b1-NIFzYMjfJQMl4nG/view?usp=share_link)
 
-使用以下数据：
+[齿轮检测验证集](https://drive.google.com/file/d/1-0sSrmhElBseeZWICu77lzTxoOiRD8yG/view?usp=share_link)
 
-- Chipped_30_2.csv
-- Health_30_2.csv
-- Miss_30_2.csv
-- Root_30_2.csv
-- Surface_30_2.csv
+下载后请解压到 `data` 目录下，训练集解压到 `data/train` （该目录下包含所有训练图片），验证集解压到 `data/val` 目录下。 
 
 #### 参与贡献
 
