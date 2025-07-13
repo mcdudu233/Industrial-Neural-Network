@@ -12,7 +12,7 @@ from train import train
 IS_DEBUG = True  # 是否启用调试
 IS_CUDA = False  # 是否使用CUDA
 IS_TRAIN = True  # 是否训练模型 否则为评估
-MODEL_PATH = "./gear_model.pth"  # 模型存放位置
+MODEL_PATH = "./model.pth"  # 模型存放位置
 
 
 # 初始化检测环境
@@ -38,17 +38,14 @@ if __name__ == "__main__":
     num_classes = len(data.CLASSES)
     print(f"创建模型，类别数量: {num_classes}")
     model = resnet_revise(num_classes=num_classes)
-    
+
     # 损失函数和优化器
     criterion = nn.CrossEntropyLoss()  # 交叉熵损失函数
     optimizer = optim.Adam(model.parameters(), lr=learning_rate)  # Adam优化器
-    
+
     # 学习率调整策略
     scheduler = optim.lr_scheduler.ReduceLROnPlateau(
-        optimizer,  # 学习率调整器
-        mode="min",
-        factor=learning_factor,
-        patience=5
+        optimizer, mode="min", factor=learning_factor, patience=5  # 学习率调整器
     )
 
     # 加载训练好的模型（如果存在）
@@ -57,16 +54,16 @@ if __name__ == "__main__":
         if IS_CUDA:
             model_state = torch.load(MODEL_PATH)
         else:
-            model_state = torch.load(MODEL_PATH, map_location=torch.device('cpu'))
+            model_state = torch.load(MODEL_PATH, map_location=torch.device("cpu"))
         model.load_state_dict(model_state)
-    
+
     # 训练模型或者测试数据
     if IS_TRAIN:
         print("开始训练模型...")
         # 获取训练数据和验证数据
         train_loader = data.get_train_data()
         val_loader = data.get_val_data()
-        
+
         # 训练模型
         model.train()
         train(
@@ -76,10 +73,10 @@ if __name__ == "__main__":
             optimizer,
             scheduler,
             val_loader=val_loader,  # 添加验证集
-            epochs=20,              # 训练轮数
+            epochs=100,  # 训练轮数
             cuda=IS_CUDA,
         )
-        
+
         # 保存训练好的模型
         print(f"保存模型到: {MODEL_PATH}")
         torch.save(model.state_dict(), MODEL_PATH)

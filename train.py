@@ -116,7 +116,7 @@ def train(
             # 保存最佳模型
             if val_acc > best_val_acc:
                 best_val_acc = val_acc
-                torch.save(model.state_dict(), "best_model.pth")
+            #     torch.save(model.state_dict(), "best_model.pth")
         else:
             # 如果没有验证集，使用训练损失更新学习率
             scheduler.step(train_loss)
