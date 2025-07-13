@@ -1,13 +1,18 @@
+# 编译器
 .vscode/*
 .vscode
 .idea
 .idea/*
 logs
 logs/*
-
 __pycache__/*
 __pycache__
 
+# 虚拟环境
+.venv
+.venv/*
+
+# 模型
 model.pth
 resnet/model.pth
 
