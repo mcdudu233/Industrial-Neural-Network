@@ -14,7 +14,9 @@ __pycache__
 
 # 模型
 model.pth
+best_model.pth
 resnet/model.pth
+training_history.png
 
 # 数据
 data
