@@ -73,7 +73,7 @@ if __name__ == "__main__":
             optimizer,
             scheduler,
             val_loader=val_loader,  # 添加验证集
-            epochs=100,  # 训练轮数
+            epochs=120,  # 训练轮数
             cuda=IS_CUDA,
         )
 

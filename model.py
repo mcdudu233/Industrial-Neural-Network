@@ -19,7 +19,7 @@ class BasicBlock(nn.Module):
         )
         self.bn1 = nn.BatchNorm2d(out_channel)
         self.relu = nn.ReLU(inplace=True)
-        
+
         self.conv2 = nn.Conv2d(
             in_channels=out_channel,
             out_channels=out_channel,
@@ -57,25 +57,22 @@ class Bottleneck(nn.Module):
         super(Bottleneck, self).__init__()
         self.conv1 = nn.Conv2d(in_channel, out_channel, kernel_size=1, bias=False)
         self.bn1 = nn.BatchNorm2d(out_channel)
-        
+
         self.conv2 = nn.Conv2d(
-            out_channel, 
-            out_channel, 
-            kernel_size=3, 
-            stride=stride, 
-            padding=1, 
-            bias=False
+            out_channel,
+            out_channel,
+            kernel_size=3,
+            stride=stride,
+            padding=1,
+            bias=False,
         )
         self.bn2 = nn.BatchNorm2d(out_channel)
-        
+
         self.conv3 = nn.Conv2d(
-            out_channel, 
-            out_channel * self.expansion, 
-            kernel_size=1, 
-            bias=False
+            out_channel, out_channel * self.expansion, kernel_size=1, bias=False
         )
         self.bn3 = nn.BatchNorm2d(out_channel * self.expansion)
-        
+
         self.relu = nn.ReLU(inplace=True)
         self.downsample = downsample
 
@@ -106,27 +103,29 @@ class GearResNet(nn.Module):
     def __init__(self, block, layers, num_classes=2):
         super(GearResNet, self).__init__()
         self.in_channels = 64
-        
+
         # 初始卷积层
-        self.conv1 = nn.Conv2d(3, self.in_channels, kernel_size=7, stride=2, padding=3, bias=False)
+        self.conv1 = nn.Conv2d(
+            3, self.in_channels, kernel_size=7, stride=2, padding=3, bias=False
+        )
         self.bn1 = nn.BatchNorm2d(self.in_channels)
         self.relu = nn.ReLU(inplace=True)
         self.maxpool = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
-        
+
         # 残差层
         self.layer1 = self._make_layer(block, 64, layers[0])
         self.layer2 = self._make_layer(block, 128, layers[1], stride=2)
         self.layer3 = self._make_layer(block, 256, layers[2], stride=2)
         self.layer4 = self._make_layer(block, 512, layers[3], stride=2)
-        
+
         # 全局平均池化和分类器
         self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
         self.fc = nn.Linear(512 * block.expansion, num_classes)
-        
+
         # 权重初始化
         for m in self.modules():
             if isinstance(m, nn.Conv2d):
-                nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity='relu')
+                nn.init.kaiming_normal_(m.weight, mode="fan_out", nonlinearity="relu")
             elif isinstance(m, nn.BatchNorm2d):
                 nn.init.constant_(m.weight, 1)
                 nn.init.constant_(m.bias, 0)
@@ -136,11 +135,11 @@ class GearResNet(nn.Module):
         if stride != 1 or self.in_channels != channels * block.expansion:
             downsample = nn.Sequential(
                 nn.Conv2d(
-                    self.in_channels, 
-                    channels * block.expansion, 
-                    kernel_size=1, 
-                    stride=stride, 
-                    bias=False
+                    self.in_channels,
+                    channels * block.expansion,
+                    kernel_size=1,
+                    stride=stride,
+                    bias=False,
                 ),
                 nn.BatchNorm2d(channels * block.expansion),
             )
@@ -148,7 +147,7 @@ class GearResNet(nn.Module):
         layers = []
         layers.append(block(self.in_channels, channels, stride, downsample))
         self.in_channels = channels * block.expansion
-        
+
         for _ in range(1, blocks):
             layers.append(block(self.in_channels, channels))
 
@@ -178,12 +177,11 @@ class PretrainedGearResNet(nn.Module):
         super(PretrainedGearResNet, self).__init__()
         # 加载预训练的ResNet50模型
         self.model = models.resnet50(pretrained=pretrained)
-        
+
         # 修改最后的全连接层以适应我们的分类任务
         in_features = self.model.fc.in_features
         self.model.fc = nn.Sequential(
-            nn.Dropout(0.5),
-            nn.Linear(in_features, num_classes)
+            nn.Dropout(0.5), nn.Linear(in_features, num_classes)
         )
 
     def forward(self, x):
