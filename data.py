@@ -1,12 +1,16 @@
 import json
 import os
 
+import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 import torch
 from PIL import Image
 from torch.utils.data import Dataset, DataLoader
 from torchvision import transforms
+
+# 设置中文字体
+matplotlib.rcParams["font.sans-serif"] = ["SimHei"]
 
 # 数据读取线程数
 NUM_WORKERS = 8
@@ -104,15 +108,36 @@ class GearCocoDataset(Dataset):
         return image, label
 
 
+# 测试集加载
+class TestDataset(Dataset):
+    def __init__(self, data_dir, transform=None):
+        self.data_dir = data_dir
+        self.transform = transform
+
+        # 加载所有图像文件名
+        self.images = [f for f in os.listdir(data_dir) if f.endswith((".jpg", ".png"))]
+
+    def __len__(self):
+        return len(self.images)
+
+    def __getitem__(self, idx):
+        # 加载图像
+        image_path = os.path.join(self.data_dir, self.images[idx])
+        image = Image.open(image_path).convert("RGB")
+
+        # 应用数据转换
+        if self.transform:
+            image = self.transform(image)
+
+        return image
+
+
 # 数据增强和预处理
 def get_transforms(is_train=True):
     if is_train:
         return transforms.Compose(
             [
                 transforms.Resize((IMAGE_SIZE, IMAGE_SIZE)),
-                transforms.RandomHorizontalFlip(),
-                transforms.RandomRotation(10),
-                transforms.ColorJitter(brightness=0.2, contrast=0.2),
                 transforms.ToTensor(),
                 transforms.Normalize(mean=MEAN, std=STD),
             ]
@@ -161,7 +186,12 @@ def get_val_data():
 
 # 获得测试的数据集
 def get_test_data():
-    return get_val_data()  # 使用验证集作为测试集
+    transform = get_transforms(is_train=False)
+    dataset = TestDataset("./data/val", transform=transform)
+    loader = DataLoader(
+        dataset, batch_size=BATCH_SIZE, shuffle=False, num_workers=NUM_WORKERS
+    )
+    return loader
 
 
 # 显示图像
