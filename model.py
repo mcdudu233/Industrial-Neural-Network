@@ -188,6 +188,55 @@ class PretrainedGearResNet(nn.Module):
         return self.model(x)
 
 
+# 使用预训练的ResNet50模型并支持标准CAM（GAP）
+class CAMResNet50(nn.Module):
+    def __init__(self, num_classes=2, pretrained=True):
+        super(CAMResNet50, self).__init__()
+        self.model = models.resnet50(pretrained=pretrained)
+
+        # 采用全局平均池化（GAP）
+        self.model.avgpool = nn.AdaptiveAvgPool2d(1)
+
+        # 全连接层
+        in_features = self.model.fc.in_features
+        self.model.fc = nn.Linear(in_features, num_classes, bias=False)
+
+        # softmax
+        self.softmax = nn.Softmax(dim=1)
+
+        # 保存最后一层卷积特征和类别
+        self.feature_map = None
+        self.model.layer4.register_forward_hook(self._save_output)
+
+    def _save_output(self, module, input, output):
+        self.feature_map = output.detach()
+
+    def forward(self, x):
+        x = self.model(x)
+        x = self.softmax(x)
+        return x
+
+    def get_cam(self, class_idx, batch=0):
+        # 获取最后一层卷积特征图和全连接权重
+        assert self.feature_map is not None, "请先前输入一张图片！"
+        b, c, h, w = self.feature_map.shape
+        feature = self.feature_map[batch]  # [2048, 7, 7]
+        weight = self.model.fc.weight[class_idx]  # [2048]
+
+        # 计算CAM (权重 * 特征图)
+        cam = torch.zeros(feature.shape, dtype=torch.float32)
+        for i, w in enumerate(weight):
+            cam += w * feature[i]
+
+        # ReLU
+        cam = torch.relu(cam)
+        # 归一化到[0,1]
+        cam = (cam - cam.min()) / (cam.max() - cam.min())
+        cam = cam.numpy()
+
+        return cam
+
+
 # 创建ResNet-18模型
 def resnet18(num_classes=2):
     return GearResNet(BasicBlock, [2, 2, 2, 2], num_classes=num_classes)
@@ -210,5 +259,5 @@ def pretrained_resnet(num_classes=2):
 
 # 修改后的ResNet模型，用于齿轮缺陷检测
 def resnet_revise(num_classes=2):
-    # 默认使用预训练的ResNet50
-    return pretrained_resnet(num_classes=num_classes)
+    # 默认使用支持CAM的ResNet50
+    return CAMResNet50(num_classes=num_classes)

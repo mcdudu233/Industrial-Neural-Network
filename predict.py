@@ -9,19 +9,33 @@ from loader import STD, MEAN
 matplotlib.rcParams["font.sans-serif"] = ["SimHei"]
 
 
-# 显示图像
-def image_show(tensor0, tensor1, title=None):
-    # 转换tensor为numpy数组
-    img = tensor0.numpy().transpose((1, 2, 0))
-    # 反归一化
-    img = img * np.array(STD) + np.array(MEAN)
-    img = np.clip(img, 0, 1)
+def denormalize(numpy):
+    numpy = numpy.transpose((1, 2, 0))
+    numpy = numpy * np.array(STD) + np.array(MEAN)
+    numpy = np.clip(numpy, 0, 1)
+    return numpy
 
-    plt.figure(figsize=(8, 8))
-    plt.imshow(img)
-    if title:
-        plt.title(title)
+
+# 显示图像
+def image_show(numpy0, numpy1, title0=None, title1=None):
+    img0 = denormalize(numpy0)
+    img1 = denormalize(numpy1)
+
+    # 创建1x2子图
+    plt.figure(figsize=(12, 6))
+    plt.subplot(1, 2, 1)  # 左图
+    plt.imshow(img0)
+    if title0:
+        plt.title(title0)
     plt.axis("off")
+
+    plt.subplot(1, 2, 2)  # 右图
+    plt.imshow(img1)
+    if title1:
+        plt.title(title1)
+    plt.axis("off")
+
+    plt.tight_layout()
     plt.show()
 
 
@@ -51,5 +65,5 @@ def predict(loader, model, cuda=False):
 
             # 显示图像和预测结果
             print(f"预测标签: {pred_label}, 类别: {classes[pred_label]}")
-            title = f"预测: {classes[pred_label]}"
-            image_show(image, title)
+            cam = model.get_cam(pred_label, batch=0)
+            image_show(image.numpy(), cam, f"原图({classes[pred_label]})", "热力图")
