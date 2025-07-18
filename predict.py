@@ -1,3 +1,5 @@
+from time import sleep
+
 import matplotlib
 import numpy as np
 import torch
@@ -19,7 +21,7 @@ def denormalize(numpy):
 # 显示图像
 def image_show(numpy0, numpy1, title0=None, title1=None):
     img0 = denormalize(numpy0)
-    img1 = denormalize(numpy1)
+    img1 = numpy1
 
     # 创建1x2子图
     plt.figure(figsize=(12, 6))
@@ -65,5 +67,10 @@ def predict(loader, model, cuda=False):
 
             # 显示图像和预测结果
             print(f"预测标签: {pred_label}, 类别: {classes[pred_label]}")
-            cam = model.get_cam(pred_label, batch=0)
-            image_show(image.numpy(), cam, f"原图({classes[pred_label]})", "热力图")
+            cam = model.get_cam(pred_label, batch=0).cpu()
+            image_show(
+                image.numpy(), cam.numpy(), f"原图({classes[pred_label]})", "热力图"
+            )
+
+            # 睡眠
+            sleep(1)

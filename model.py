@@ -2,6 +2,8 @@ import torch
 import torch.nn as nn
 import torchvision.models as models
 
+from loader import IMAGE_SIZE
+
 
 # 基础残差块
 class BasicBlock(nn.Module):
@@ -224,17 +226,24 @@ class CAMResNet50(nn.Module):
         weight = self.model.fc.weight[class_idx]  # [2048]
 
         # 计算CAM (权重 * 特征图)
-        cam = torch.zeros(feature.shape, dtype=torch.float32)
+        cam = torch.zeros(
+            (1, 1, h, w), dtype=torch.float32, device=self.feature_map.device
+        )
         for i, w in enumerate(weight):
-            cam += w * feature[i]
+            cam[0][0] += w * feature[i]
 
         # ReLU
         cam = torch.relu(cam)
         # 归一化到[0,1]
         cam = (cam - cam.min()) / (cam.max() - cam.min())
-        cam = cam.numpy()
+        cam = cam
 
-        return cam
+        # 上采样
+        resized_cam = nn.functional.interpolate(
+            cam, size=(IMAGE_SIZE, IMAGE_SIZE), mode="bicubic", align_corners=False
+        )
+
+        return resized_cam[0][0]
 
 
 # 创建ResNet-18模型
