@@ -1,16 +1,10 @@
 import json
 import os
 
-import matplotlib
-import matplotlib.pyplot as plt
-import numpy as np
 import torch
 from PIL import Image
 from torch.utils.data import Dataset, DataLoader
 from torchvision import transforms
-
-# 设置中文字体
-matplotlib.rcParams["font.sans-serif"] = ["SimHei"]
 
 # 数据读取线程数
 NUM_WORKERS = 8
@@ -188,23 +182,5 @@ def get_val_data():
 def get_test_data():
     transform = get_transforms(is_train=False)
     dataset = TestDataset("./data/val", transform=transform)
-    loader = DataLoader(
-        dataset, batch_size=BATCH_SIZE, shuffle=False, num_workers=NUM_WORKERS
-    )
+    loader = DataLoader(dataset, batch_size=1, shuffle=False, num_workers=NUM_WORKERS)
     return loader
-
-
-# 显示图像
-def image_show(tensor, title=None):
-    # 转换tensor为numpy数组
-    img = tensor.numpy().transpose((1, 2, 0))
-    # 反归一化
-    img = img * np.array(STD) + np.array(MEAN)
-    img = np.clip(img, 0, 1)
-
-    plt.figure(figsize=(8, 8))
-    plt.imshow(img)
-    if title:
-        plt.title(title)
-    plt.axis("off")
-    plt.show()

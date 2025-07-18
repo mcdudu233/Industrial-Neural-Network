@@ -1,9 +1,9 @@
 import os.path
 
-import data
 import torch
 from torch import nn, optim
 
+from loader import CLASSES, get_train_data, get_val_data, get_test_data
 from model import resnet_revise
 from predict import predict
 from train import train
@@ -11,7 +11,7 @@ from train import train
 # 全局参数区
 IS_DEBUG = True  # 是否启用调试
 IS_CUDA = False  # 是否使用CUDA
-IS_TRAIN = False  # 是否训练模型 否则为评估
+IS_TRAIN = True  # 是否训练模型 否则为评估
 MODEL_PATH = "./model.pth"  # 模型存放位置
 
 
@@ -35,7 +35,7 @@ if __name__ == "__main__":
     learning_factor = 0.9  # 学习率调整因子
 
     # 创建齿轮缺陷检测模型
-    num_classes = len(data.CLASSES)
+    num_classes = len(CLASSES)
     print(f"创建模型，类别数量: {num_classes}")
     model = resnet_revise(num_classes=num_classes)
 
@@ -61,8 +61,8 @@ if __name__ == "__main__":
     if IS_TRAIN:
         print("开始训练模型...")
         # 获取训练数据和验证数据
-        train_loader = data.get_train_data()
-        val_loader = data.get_val_data()
+        train_loader = get_train_data()
+        val_loader = get_val_data()
 
         # 训练模型
         model.train()
@@ -73,7 +73,7 @@ if __name__ == "__main__":
             optimizer,
             scheduler,
             val_loader=val_loader,  # 添加验证集
-            epochs=120,  # 训练轮数
+            epochs=10,  # 训练轮数
             cuda=IS_CUDA,
         )
 
@@ -82,7 +82,7 @@ if __name__ == "__main__":
         torch.save(model.state_dict(), MODEL_PATH)
     else:
         print("开始评估模型...")
-        test_loader = data.get_test_data()
+        test_loader = get_test_data()
         # 评估模型
         model.eval()
         predict(test_loader, model, cuda=IS_CUDA)
